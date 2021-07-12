@@ -455,23 +455,27 @@ const sketch = new _classesSketchDefault.default({
   canvas: document.getElementById("app")
 });
 const generator = new _classesMathRandomGeneratorDefault.default();
-const {dimensions} = sketch;
-const population = 100;
-for (let i = 0; i < population.length; i++) {
+const population = 200;
+for (let i = 0; i < population; i++) {
   sketch.add(new _classesPlanetDefault.default({
-    radius: 10,
-    mass: generator.integer(1, 10),
-    pos: new _classesMathVectorDefault.default(generator.integer(0, dimensions.width), generator.integer(0, dimensions.height))
+    radius: 7,
+    mass: 5,
+    // mass: generator.integer(1, 10),
+    pos: new _classesMathVectorDefault.default(generator.integer(0, sketch.dimensions.width), generator.integer(0, sketch.dimensions.height))
   }));
 }
 sketch.render();
+console.log(sketch.objects[0]);
 
 },{"./classes/math/RandomGenerator":"3jwsS","./classes/math/Vector":"6j4zL","./classes/Sketch":"4q5Wm","./classes/Planet":"5EWzS","@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT"}],"3jwsS":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
 class RandomGenerator {
   integer(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
+    return Math.floor(this.float(min, max));
+  }
+  float(min, max) {
+    return Math.random() * (max - min) + min;
   }
 }
 exports.default = RandomGenerator;
@@ -576,10 +580,10 @@ exports.default = Vector;
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
 class Sketch {
-  objects = [];
   constructor({canvas}) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d");
+    this.objects = [];
     this.resize();
     window.addEventListener("resize", this.resize.bind(this));
   }
@@ -602,6 +606,7 @@ class Sketch {
     }
   }
   render() {
+    this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height);
     for (const object of this.objects) {
       object?.core?.(this);
     }
@@ -613,34 +618,41 @@ exports.default = Sketch;
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT"}],"5EWzS":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
-require("./math/RandomGenerator");
+var _mathRandomGenerator = require("./math/RandomGenerator");
+var _mathRandomGeneratorDefault = _parcelHelpers.interopDefault(_mathRandomGenerator);
 var _mathVector = require("./math/Vector");
 var _mathVectorDefault = _parcelHelpers.interopDefault(_mathVector);
 var _mathUtils = require("./math/Utils");
 var _mathUtilsDefault = _parcelHelpers.interopDefault(_mathUtils);
+const generator = new _mathRandomGeneratorDefault.default();
 const utils = new _mathUtilsDefault.default();
+const max = 1;
 class Planet {
-  vel = new _mathVectorDefault.default(0, 0);
+  vel = new _mathVectorDefault.default(generator.float(-1, 1), generator.float(-1, 1));
   acc = new _mathVectorDefault.default(0, 0);
-  constructor({radius, mass, pos}) {
+  constructor({radius = 5, mass = 5, pos}) {
     this.radius = radius;
     this.mass = mass;
     this.pos = pos;
   }
   update(objects) {
     for (const object of objects) {
-      const direction = new _mathVectorDefault.default(object.pos.x - this.pos.x, object.pos.y - this.pos.y);
-      const F = utils.force(object, this);
-      direction.setMag(F);
-      this.acc.add(direction);
+      if (object !== this) {
+        const direction = new _mathVectorDefault.default(object.pos.x - this.pos.x, object.pos.y - this.pos.y);
+        const F = utils.force(object, this);
+        direction.setMag(F);
+        this.acc.add(direction);
+      }
     }
     this.vel.add(this.acc);
+    this.vel.limit(max);
     this.pos.add(this.vel);
     this.acc.mult(0);
   }
   render(ctx) {
+    ctx.beginPath();
+    ctx.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
     ctx.fillStyle = "#000";
-    ctx.arc(this.pos.x, this.pos.y, this.radius, 2 * Math.PI);
     ctx.fill();
   }
   core({ctx, objects}) {
@@ -653,7 +665,6 @@ exports.default = Planet;
 },{"./math/RandomGenerator":"3jwsS","./math/Vector":"6j4zL","./math/Utils":"6d18A","@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT"}],"6d18A":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
-require("./Vector");
 const gravitationalConstant = 1;
 class Utils {
   distance(vec1, vec2) {
@@ -667,6 +678,6 @@ class Utils {
 }
 exports.default = Utils;
 
-},{"./Vector":"6j4zL","@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT"}]},["3KdSp","71k5j"], "71k5j", "parcelRequired861")
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT"}]},["3KdSp","71k5j"], "71k5j", "parcelRequired861")
 
 //# sourceMappingURL=index.24e1d95d.js.map

@@ -6,15 +6,20 @@ import Planet from "./classes/Planet"
 const sketch = new Sketch({ canvas: document.getElementById("app") })
 
 const generator = new RandomGenerator()
-const { dimensions } = sketch
-const population = 100
+const population = 200
 
-for(let i = 0; i < population.length; i++) {
+for(let i = 0; i < population; i++) {
     sketch.add(new Planet({ 
-        radius: 10, 
-        mass: generator.integer(1, 10), 
-        pos: new Vector(generator.integer(0, dimensions.width), generator.integer(0, dimensions.height)) 
+        radius: 7, 
+        mass: 5,
+        // mass: generator.integer(1, 10), 
+        pos: new Vector(
+            generator.integer(0, sketch.dimensions.width), 
+            generator.integer(0, sketch.dimensions.height)
+        ) 
     }))
 }
 
 sketch.render()
+
+console.log(sketch.objects[0])

@@ -1,5 +1,3 @@
-import Vector from "./Vector"
-
 const gravitationalConstant = 1
 
 export default class Utils {
@@ -10,7 +8,6 @@ export default class Utils {
     force(object1, object2) {
         const r = this.distance(object1.pos, object2.pos)
         const F = gravitationalConstant * (object1.mass * object2.mass) / Math.pow(r, 2)
-        
         return F
     }
 }

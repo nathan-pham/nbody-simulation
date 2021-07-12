@@ -1,10 +1,10 @@
 export default class Sketch {
-    objects = []
-
     constructor({ canvas }) {
         this.canvas = canvas
         this.ctx = this.canvas.getContext("2d")
 
+        this.objects = []
+        
         this.resize()
         window.addEventListener("resize", this.resize.bind(this))
     }
@@ -28,6 +28,7 @@ export default class Sketch {
     }
 
     render() {
+        this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height)
         for(const object of this.objects) {
             object?.core(this)
         }
