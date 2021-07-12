@@ -2,7 +2,6 @@ import RandomGenerator from "./math/RandomGenerator"
 import Vector from "./math/Vector"
 import Utils from "./math/Utils"
 
-const generator = new RandomGenerator()
 const utils = new Utils()
 
 export default class Planet {
