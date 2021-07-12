@@ -5,11 +5,7 @@ export default class Planet {
         this.mass = mass
     }
 
-    update() {
-
-    }
-
-    render() {
-
+    core(sketch) {
+        
     }
 }
