@@ -42,7 +42,7 @@ export default class Sketch {
 
             const direction = new Vector(last.x - first.x, last.y - first.y)
             direction.setMag(utils.distance(last, first))
-
+            direction.div(20)
 
             this.objects.push(new Planet({
                 pos: new Vector(first.x, first.y),

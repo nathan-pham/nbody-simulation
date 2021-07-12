@@ -624,6 +624,7 @@ class Sketch {
       const {first} = this.mouse;
       const direction = new _mathVectorDefault.default(last.x - first.x, last.y - first.y);
       direction.setMag(utils.distance(last, first));
+      direction.div(20);
       this.objects.push(new _PlanetDefault.default({
         pos: new _mathVectorDefault.default(first.x, first.y),
         vel: direction.mag() == 0 ? null : direction
@@ -728,7 +729,7 @@ var _mathUtils = require("./math/Utils");
 var _mathUtilsDefault = _parcelHelpers.interopDefault(_mathUtils);
 const generator = new _mathRandomGeneratorDefault.default();
 const utils = new _mathUtilsDefault.default();
-const max = 1;
+const max = 3;
 class Planet {
   vel = new _mathVectorDefault.default(generator.float(-1, 1), generator.float(-1, 1));
   acc = new _mathVectorDefault.default(0, 0);

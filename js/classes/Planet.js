@@ -4,7 +4,7 @@ import Utils from "./math/Utils"
 
 const generator = new RandomGenerator()
 const utils = new Utils()
-const max = 1
+const max = 3
 
 export default class Planet {
     vel = new Vector(generator.float(-1, 1), generator.float(-1, 1))
