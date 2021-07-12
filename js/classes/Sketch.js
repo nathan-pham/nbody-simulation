@@ -21,6 +21,12 @@ export default class Sketch {
         }), {}))
     }
 
+    add(...objects) {
+        for(const object of objects) {
+            this.objects.push(object)
+        }
+    }
+
     render() {
         for(const object of this.objects) {
             object?.core(this)
