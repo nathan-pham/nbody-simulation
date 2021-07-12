@@ -4,17 +4,42 @@ import Utils from "./math/Utils"
 import Planet from "./Planet"
 
 const utils = new Utils()
-const generator = new RandomGenerator()
 
 export default class Sketch {
     constructor({ canvas }) {
         this.canvas = canvas
         this.ctx = this.canvas.getContext("2d")
 
+        this.mouse = { down: false, moving: false, first: {}, last: {} }
         this.objects = []
         
         this.resize()
         window.addEventListener("resize", this.resize.bind(this))
+
+        this.canvas.addEventListener("mousedown", (e) => {
+            const mouse = utils.mouse(this.canvas, e)
+
+            Object.assign(this.mouse, {
+                first: mouse,
+                last: mouse,
+                down: true
+            })
+        })
+
+        this.canvas.addEventListener("mousemove", (e) => {
+            if(this.mouse.down) {
+                this.mouse.moving = true
+                this.mouse.last = utils.mouse(this.canvas, e)
+            }
+        })
+
+        this.canvas.addEventListener("mouseup", (e) => {
+            this.mouse.down = false
+            this.mouse.moving = false
+
+            const last = utils.mouse(this.canvas, e)
+
+        })
     }
 
     get dimensions() {
@@ -68,5 +93,12 @@ export default class Sketch {
         this.update()
 
         window.requestAnimationFrame(this.render.bind(this))
+
+        if(this.mouse.moving) {
+            this.ctx.beginPath()
+            this.ctx.moveTo(this.mouse.first.x, this.mouse.first.y)
+            this.ctx.lineTo(this.mouse.last.x, this.mouse.last.y)
+            this.ctx.stroke()
+        }
     }
 }

@@ -1,12 +1,10 @@
 import RandomGenerator from "./classes/math/RandomGenerator"
 import Vector from "./classes/math/Vector"
-import Utils from "./classes/math/Utils"
 import Sketch from "./classes/Sketch"
 import Planet from "./classes/Planet"
 
 const sketch = new Sketch({ canvas: document.getElementById("app") })
 const generator = new RandomGenerator()
-const utils = new Utils()
 
 const population = 20
 
@@ -28,8 +26,8 @@ for(let i = 0; i < population; i++) {
     generatePlanet()
 }
 
-document.body.addEventListener("click", (e) => {
-    generatePlanet(utils.mouse(sketch.canvas, e))
-})
+// document.body.addEventListener("click", (e) => {
+//     generatePlanet(utils.mouse(sketch.canvas, e))
+// })
 
 sketch.render()

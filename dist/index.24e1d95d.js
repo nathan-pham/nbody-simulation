@@ -447,8 +447,6 @@ var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 var _classesMathRandomGeneratorDefault = _parcelHelpers.interopDefault(_classesMathRandomGenerator);
 var _classesMathVector = require("./classes/math/Vector");
 var _classesMathVectorDefault = _parcelHelpers.interopDefault(_classesMathVector);
-var _classesMathUtils = require("./classes/math/Utils");
-var _classesMathUtilsDefault = _parcelHelpers.interopDefault(_classesMathUtils);
 var _classesSketch = require("./classes/Sketch");
 var _classesSketchDefault = _parcelHelpers.interopDefault(_classesSketch);
 var _classesPlanet = require("./classes/Planet");
@@ -457,7 +455,6 @@ const sketch = new _classesSketchDefault.default({
   canvas: document.getElementById("app")
 });
 const generator = new _classesMathRandomGeneratorDefault.default();
-const utils = new _classesMathUtilsDefault.default();
 const population = 20;
 const generatePlanet = ({x, y} = {}) => {
   sketch.add(new _classesPlanetDefault.default({
@@ -470,12 +467,12 @@ const generatePlanet = ({x, y} = {}) => {
 for (let i = 0; i < population; i++) {
   generatePlanet();
 }
-document.body.addEventListener("click", e => {
-  generatePlanet(utils.mouse(sketch.canvas, e));
-});
+// document.body.addEventListener("click", (e) => {
+// generatePlanet(utils.mouse(sketch.canvas, e))
+// })
 sketch.render();
 
-},{"./classes/math/RandomGenerator":"3jwsS","./classes/math/Vector":"6j4zL","./classes/Sketch":"4q5Wm","./classes/Planet":"5EWzS","@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT","./classes/math/Utils":"6d18A"}],"3jwsS":[function(require,module,exports) {
+},{"./classes/math/RandomGenerator":"3jwsS","./classes/math/Vector":"6j4zL","./classes/Sketch":"4q5Wm","./classes/Planet":"5EWzS","@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT"}],"3jwsS":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
 class RandomGenerator {
@@ -587,21 +584,44 @@ exports.default = Vector;
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT"}],"4q5Wm":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
-var _mathRandomGenerator = require("./math/RandomGenerator");
-var _mathRandomGeneratorDefault = _parcelHelpers.interopDefault(_mathRandomGenerator);
+require("./math/RandomGenerator");
 require("./math/Vector");
 var _mathUtils = require("./math/Utils");
 var _mathUtilsDefault = _parcelHelpers.interopDefault(_mathUtils);
 require("./Planet");
 const utils = new _mathUtilsDefault.default();
-const generator = new _mathRandomGeneratorDefault.default();
 class Sketch {
   constructor({canvas}) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d");
+    this.mouse = {
+      down: false,
+      moving: false,
+      first: {},
+      last: {}
+    };
     this.objects = [];
     this.resize();
     window.addEventListener("resize", this.resize.bind(this));
+    this.canvas.addEventListener("mousedown", e => {
+      const mouse = utils.mouse(this.canvas, e);
+      Object.assign(this.mouse, {
+        first: mouse,
+        last: mouse,
+        down: true
+      });
+    });
+    this.canvas.addEventListener("mousemove", e => {
+      if (this.mouse.down) {
+        this.mouse.moving = true;
+        this.mouse.last = utils.mouse(this.canvas, e);
+      }
+    });
+    this.canvas.addEventListener("mouseup", e => {
+      this.mouse.down = false;
+      this.mouse.moving = false;
+      const last = utils.mouse(this.canvas, e);
+    });
   }
   get dimensions() {
     return {
@@ -647,6 +667,12 @@ class Sketch {
     }
     this.update();
     window.requestAnimationFrame(this.render.bind(this));
+    if (this.mouse.moving) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.mouse.first.x, this.mouse.first.y);
+      this.ctx.lineTo(this.mouse.last.x, this.mouse.last.y);
+      this.ctx.stroke();
+    }
   }
 }
 exports.default = Sketch;
