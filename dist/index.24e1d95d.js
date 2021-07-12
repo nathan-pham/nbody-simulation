@@ -465,7 +465,6 @@ for (let i = 0; i < population; i++) {
   }));
 }
 sketch.render();
-console.log(sketch.objects[0]);
 
 },{"./classes/math/RandomGenerator":"3jwsS","./classes/math/Vector":"6j4zL","./classes/Sketch":"4q5Wm","./classes/Planet":"5EWzS","@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT"}],"3jwsS":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
@@ -630,20 +629,44 @@ const max = 1;
 class Planet {
   vel = new _mathVectorDefault.default(generator.float(-1, 1), generator.float(-1, 1));
   acc = new _mathVectorDefault.default(0, 0);
-  constructor({radius = 5, mass = 5, pos}) {
+  constructor({radius = 5, mass = 5, pos, vel}) {
     this.radius = radius;
     this.mass = mass;
     this.pos = pos;
+    if (vel) {
+      this.vel = vel;
+    }
+  }
+  boundary({width, height}) {
+    if (this.pos.x < -this.radius) {
+      this.pos.x = width + this.radius;
+    }
+    if (this.pos.x > width + this.radius) {
+      this.pos.x = -this.radius;
+    }
+    if (this.pos.y > height + this.radius) {
+      this.pos.y = -this.radius;
+    }
+    if (this.pos.y < -this.radius) {
+      this.pos.y = height + this.radius;
+    }
   }
   update(objects) {
-    for (const object of objects) {
+    const remove = [];
+    for (let i = 0; i < objects.length; i++) {
+      const object = objects[i];
       if (object !== this) {
+        // calculate force
         const direction = new _mathVectorDefault.default(object.pos.x - this.pos.x, object.pos.y - this.pos.y);
         const F = utils.force(object, this);
         direction.setMag(F);
         this.acc.add(direction);
+        if (utils.distance(object.pos, this.pos) < 1) {
+          remove.push(object);
+        }
       }
     }
+    // objects = objects.filter((object) => !remove.includes(object))
     this.vel.add(this.acc);
     this.vel.limit(max);
     this.pos.add(this.vel);
@@ -655,7 +678,8 @@ class Planet {
     ctx.fillStyle = "#000";
     ctx.fill();
   }
-  core({ctx, objects}) {
+  core({ctx, objects, dimensions}) {
+    this.boundary(dimensions);
     this.update(objects);
     this.render(ctx);
   }

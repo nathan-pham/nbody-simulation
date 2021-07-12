@@ -21,5 +21,3 @@ for(let i = 0; i < population; i++) {
 }
 
 sketch.render()
-
-console.log(sketch.objects[0])
