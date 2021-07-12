@@ -1,3 +1,11 @@
+import RandomGenerator from "./math/RandomGenerator"
+import Vector from "./math/Vector"
+import Utils from "./math/Utils"
+import Planet from "./Planet"
+
+const utils = new Utils()
+const generator = new RandomGenerator()
+
 export default class Sketch {
     constructor({ canvas }) {
         this.canvas = canvas
@@ -27,11 +35,37 @@ export default class Sketch {
         }
     }
 
+    update() {
+        const scheduleForDeletion = []
+
+        for(const object1 of this.objects) {
+            for(const object2 of this.objects) {
+                if(object1 !== object2 && 
+                    !(scheduleForDeletion.includes(object1) || 
+                      scheduleForDeletion.includes(object2))
+                ) {
+                    if(utils.distance(object1.pos, object2.pos) < Math.min(object1.radius, object2.radius) / 2) {
+                        scheduleForDeletion.push(object1)
+
+                        const clone = object1.acc.clone()
+                        clone.add(object2.acc)
+
+                        object2.radius = Math.max(object2.radius, object1.radius) + 0.5
+                        object2.mass = (object1.mass) + (object2.mass)
+                        object2.vel.mult(0)
+                        object2.acc = clone
+                    }
+                }
+            }
+        }
+
+        this.objects = this.objects.filter(object => !scheduleForDeletion.includes(object))
+    }
+
     render() {
         this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height)
-        for(const object of this.objects) {
-            object?.core(this)
-        }
+        for(const object of this.objects) { object?.core(this) }
+        this.update()
 
         window.requestAnimationFrame(this.render.bind(this))
     }

@@ -9,14 +9,14 @@ const max = 1
 export default class Planet {
     vel = new Vector(generator.float(-1, 1), generator.float(-1, 1))
     acc = new Vector(0, 0)
+    pos = new Vector(0, 0)
 
-    constructor({ radius=5, mass=5, pos, vel }) {
+    constructor({ radius=5, mass=5, pos }) {
         this.radius = radius
         this.mass = mass
-        this.pos = pos
 
-        if(vel) {
-            this.vel = vel
+        if(pos) {
+            this.pos = pos
         }
     }
 
@@ -28,35 +28,22 @@ export default class Planet {
     }
 
     update(objects) {
-        const remove = []
-
-        for(let i = 0; i < objects.length; i++) {
-            const object = objects[i]
-
+        for(const object of objects) {
             if(object !== this) {
                 // calculate force
                 const direction = new Vector(object.pos.x - this.pos.x, object.pos.y - this.pos.y)
-                const F = utils.force(object, this)
-                direction.setMag(F)
+                direction.setMag(utils.force(object, this))
+                direction.div(this.mass)
+
+                // F = m * acc
+                // 
+
                 this.acc.add(direction)
-
-                if(utils.distance(object.pos, this.pos) < 1) {
-                    remove.push(object)
-
-                    // Object.assign(this, {
-                    //     radius: objects.radius + this.radius,
-                    //     mass: objects.mass + this.mass,
-                    //     pos: this.pos.clone()
-                    // })
-                }
             }
         }
 
-        // objects = objects.filter((object) => !remove.includes(object))
-        
         this.vel.add(this.acc)
         this.vel.limit(max)
-
         this.pos.add(this.vel)
         this.acc.mult(0)
     }
