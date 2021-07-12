@@ -16,3 +16,5 @@ for(let i = 0; i < population.length; i++) {
         pos: new Vector(generator.integer(0, dimensions.width), generator.integer(0, dimensions.height)) 
     }))
 }
+
+sketch.render()

@@ -464,6 +464,7 @@ for (let i = 0; i < population.length; i++) {
     pos: new _classesMathVectorDefault.default(generator.integer(0, dimensions.width), generator.integer(0, dimensions.height))
   }));
 }
+sketch.render();
 
 },{"./classes/math/RandomGenerator":"3jwsS","./classes/math/Vector":"6j4zL","./classes/Sketch":"4q5Wm","./classes/Planet":"5EWzS","@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT"}],"3jwsS":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
@@ -589,8 +590,8 @@ class Sketch {
     };
   }
   resize() {
-    Object.assign(canvas, this.dimensions);
-    Object.assign(canvas.style, Object.keys(this.dimensions).reduce((acc, cur) => ({
+    Object.assign(this.canvas, this.dimensions);
+    Object.assign(this.canvas.style, Object.keys(this.dimensions).reduce((acc, cur) => ({
       ...acc,
       [cur]: this.dimensions[cur] + "px"
     }), {}));

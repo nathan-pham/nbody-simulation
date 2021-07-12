@@ -14,8 +14,8 @@ export default class Sketch {
     }
 
     resize() {
-        Object.assign(canvas, this.dimensions)
-        Object.assign(canvas.style, Object.keys(this.dimensions).reduce((acc, cur) => ({  
+        Object.assign(this.canvas, this.dimensions)
+        Object.assign(this.canvas.style, Object.keys(this.dimensions).reduce((acc, cur) => ({  
             ...acc,
             [cur]: this.dimensions[cur] + "px"
         }), {}))
