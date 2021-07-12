@@ -11,12 +11,16 @@ export default class Planet {
     acc = new Vector(0, 0)
     pos = new Vector(0, 0)
 
-    constructor({ radius=5, mass=5, pos }) {
+    constructor({ radius=2, mass=10, pos, vel }) {
         this.radius = radius
         this.mass = mass
 
         if(pos) {
             this.pos = pos
+        }
+
+        if(vel) {
+            this.vel = vel
         }
     }
 

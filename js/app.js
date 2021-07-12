@@ -10,8 +10,6 @@ const population = 20
 
 const generatePlanet = ({ x, y }={}) => {
     sketch.add(new Planet({ 
-        radius: 2, 
-        mass: 10,
         // mass: generator.integer(1, 10), 
         pos: (x && y) 
             ? new Vector(x, y) 

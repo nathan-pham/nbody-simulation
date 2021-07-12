@@ -38,7 +38,16 @@ export default class Sketch {
             this.mouse.moving = false
 
             const last = utils.mouse(this.canvas, e)
+            const { first } = this.mouse
 
+            const direction = new Vector(last.x - first.x, last.y - first.y)
+            direction.setMag(utils.distance(last, first))
+
+
+            this.objects.push(new Planet({
+                pos: new Vector(first.x, first.y),
+                vel: direction.mag() == 0 ? null : direction
+            }))
         })
     }
 

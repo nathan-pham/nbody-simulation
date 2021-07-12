@@ -458,8 +458,6 @@ const generator = new _classesMathRandomGeneratorDefault.default();
 const population = 20;
 const generatePlanet = ({x, y} = {}) => {
   sketch.add(new _classesPlanetDefault.default({
-    radius: 2,
-    mass: 10,
     // mass: generator.integer(1, 10),
     pos: x && y ? new _classesMathVectorDefault.default(x, y) : new _classesMathVectorDefault.default(generator.integer(0, sketch.dimensions.width), generator.integer(0, sketch.dimensions.height))
   }));
@@ -585,10 +583,12 @@ exports.default = Vector;
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
 require("./math/RandomGenerator");
-require("./math/Vector");
+var _mathVector = require("./math/Vector");
+var _mathVectorDefault = _parcelHelpers.interopDefault(_mathVector);
 var _mathUtils = require("./math/Utils");
 var _mathUtilsDefault = _parcelHelpers.interopDefault(_mathUtils);
-require("./Planet");
+var _Planet = require("./Planet");
+var _PlanetDefault = _parcelHelpers.interopDefault(_Planet);
 const utils = new _mathUtilsDefault.default();
 class Sketch {
   constructor({canvas}) {
@@ -621,6 +621,13 @@ class Sketch {
       this.mouse.down = false;
       this.mouse.moving = false;
       const last = utils.mouse(this.canvas, e);
+      const {first} = this.mouse;
+      const direction = new _mathVectorDefault.default(last.x - first.x, last.y - first.y);
+      direction.setMag(utils.distance(last, first));
+      this.objects.push(new _PlanetDefault.default({
+        pos: new _mathVectorDefault.default(first.x, first.y),
+        vel: direction.mag() == 0 ? null : direction
+      }));
     });
   }
   get dimensions() {
@@ -726,11 +733,14 @@ class Planet {
   vel = new _mathVectorDefault.default(generator.float(-1, 1), generator.float(-1, 1));
   acc = new _mathVectorDefault.default(0, 0);
   pos = new _mathVectorDefault.default(0, 0);
-  constructor({radius = 5, mass = 5, pos}) {
+  constructor({radius = 2, mass = 10, pos, vel}) {
     this.radius = radius;
     this.mass = mass;
     if (pos) {
       this.pos = pos;
+    }
+    if (vel) {
+      this.vel = vel;
     }
   }
   boundary({width, height}) {
