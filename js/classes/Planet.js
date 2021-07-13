@@ -37,11 +37,13 @@ export default class Planet {
                 // calculate force
                 const direction = new Vector(object.pos.x - this.pos.x, object.pos.y - this.pos.y)
                 direction.setMag(utils.force(object, this))
-                direction.div(this.mass)
+                // direction.div(object.mass)
+                direction.mult(this.mass / (this.mass + object.mass))
+
+                // direction.div(this.mass)
 
                 // F = m * acc
                 // 
-
                 this.acc.add(direction)
             }
         }

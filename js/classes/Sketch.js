@@ -1,4 +1,3 @@
-import RandomGenerator from "./math/RandomGenerator"
 import Vector from "./math/Vector"
 import Utils from "./math/Utils"
 import Planet from "./Planet"
@@ -42,7 +41,7 @@ export default class Sketch {
 
             const direction = new Vector(last.x - first.x, last.y - first.y)
             direction.setMag(utils.distance(last, first))
-            direction.div(20)
+            direction.div(-30)
 
             this.objects.push(new Planet({
                 pos: new Vector(first.x, first.y),
@@ -78,16 +77,22 @@ export default class Sketch {
                     !(scheduleForDeletion.includes(object1) || 
                       scheduleForDeletion.includes(object2))
                 ) {
-                    if(utils.distance(object1.pos, object2.pos) < Math.min(object1.radius, object2.radius) / 2) {
+                    if(utils.distance(object1.pos, object2.pos) < Math.min(object1.radius, object2.radius)) {
                         scheduleForDeletion.push(object1)
 
                         const clone = object1.acc.clone()
                         clone.add(object2.acc)
+                        // const clone = this.vel.clone()
+                        // clone.div(this.mass)
+                        // this.vel.limit(max)
 
                         object2.radius = Math.max(object2.radius, object1.radius) + 0.5
                         object2.mass = (object1.mass) + (object2.mass)
+
+                        // clone.div(object2.mass)
                         object2.vel.mult(0)
-                        object2.acc = clone
+                        object2.acc.mult(0)
+                        // object2.acc = clone
                     }
                 }
             }

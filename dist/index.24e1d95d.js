@@ -455,7 +455,7 @@ const sketch = new _classesSketchDefault.default({
   canvas: document.getElementById("app")
 });
 const generator = new _classesMathRandomGeneratorDefault.default();
-const population = 20;
+const population = 500;
 const generatePlanet = ({x, y} = {}) => {
   sketch.add(new _classesPlanetDefault.default({
     // mass: generator.integer(1, 10),
@@ -582,7 +582,6 @@ exports.default = Vector;
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT"}],"4q5Wm":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
-require("./math/RandomGenerator");
 var _mathVector = require("./math/Vector");
 var _mathVectorDefault = _parcelHelpers.interopDefault(_mathVector);
 var _mathUtils = require("./math/Utils");
@@ -624,7 +623,7 @@ class Sketch {
       const {first} = this.mouse;
       const direction = new _mathVectorDefault.default(last.x - first.x, last.y - first.y);
       direction.setMag(utils.distance(last, first));
-      direction.div(20);
+      direction.div(-30);
       this.objects.push(new _PlanetDefault.default({
         pos: new _mathVectorDefault.default(first.x, first.y),
         vel: direction.mag() == 0 ? null : direction
@@ -654,14 +653,18 @@ class Sketch {
     for (const object1 of this.objects) {
       for (const object2 of this.objects) {
         if (object1 !== object2 && !(scheduleForDeletion.includes(object1) || scheduleForDeletion.includes(object2))) {
-          if (utils.distance(object1.pos, object2.pos) < Math.min(object1.radius, object2.radius) / 2) {
+          if (utils.distance(object1.pos, object2.pos) < Math.min(object1.radius, object2.radius)) {
             scheduleForDeletion.push(object1);
             const clone = object1.acc.clone();
             clone.add(object2.acc);
+            // const clone = this.vel.clone()
+            // clone.div(this.mass)
+            // this.vel.limit(max)
             object2.radius = Math.max(object2.radius, object1.radius) + 0.5;
             object2.mass = object1.mass + object2.mass;
+            // clone.div(object2.mass)
             object2.vel.mult(0);
-            object2.acc = clone;
+            object2.acc.mult(0);
           }
         }
       }
@@ -685,7 +688,7 @@ class Sketch {
 }
 exports.default = Sketch;
 
-},{"@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT","./math/Utils":"6d18A","./Planet":"5EWzS","./math/Vector":"6j4zL","./math/RandomGenerator":"3jwsS"}],"6d18A":[function(require,module,exports) {
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"7kyIT","./math/Utils":"6d18A","./Planet":"5EWzS","./math/Vector":"6j4zL"}],"6d18A":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
 _parcelHelpers.defineInteropFlag(exports);
 const gravitationalConstant = 0.1;
@@ -764,7 +767,9 @@ class Planet {
         // calculate force
         const direction = new _mathVectorDefault.default(object.pos.x - this.pos.x, object.pos.y - this.pos.y);
         direction.setMag(utils.force(object, this));
-        direction.div(this.mass);
+        // direction.div(object.mass)
+        direction.mult(this.mass / (this.mass + object.mass));
+        // direction.div(this.mass)
         // F = m * acc
         // 
         this.acc.add(direction);

@@ -6,7 +6,7 @@ import Planet from "./classes/Planet"
 const sketch = new Sketch({ canvas: document.getElementById("app") })
 const generator = new RandomGenerator()
 
-const population = 20
+const population = 500
 
 const generatePlanet = ({ x, y }={}) => {
     sketch.add(new Planet({ 
